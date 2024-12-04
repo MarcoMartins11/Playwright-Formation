@@ -29,10 +29,14 @@ test.describe('First exercise', () => {
         await page.getByPlaceholder('Password').fill(password);
 
         // Submit
+        await expect(page.getByRole('button', { name: 'Submit' })).toBeEnabled();
         await page.getByRole('button', { name: 'Submit' }).click();
+
+        // Verification 
+        await expect(page.getByRole('button', { name: 'Add a New Contact' })).toBeVisible();
     })
 
-    test.only('Login and add row with info', async ({ page }) => {
+    test('Login and add row with info', async ({ page }) => {
         // Goto page
         await page.goto(link);
 
@@ -82,5 +86,32 @@ test.describe('First exercise', () => {
         await page.getByPlaceholder('Country').fill('portugal');
 
         await page.getByRole('button', { name: "Submit" }).click();
+    });
+
+    test('Get row information and check it', async ({ page }) => {
+        // Goto page
+        await page.goto(link)
+        
+        // Login (maybe do a function)
+        await page.getByPlaceholder('Email').click();
+        await page.getByPlaceholder('Email').fill(email);
+
+        await page.getByPlaceholder('Password').click();
+        await page.getByPlaceholder('Password').fill(password);
+
+        await page.getByRole('button', { name: 'Submit' }).click();
+
+        // Click on the row
+        await page.getByRole('cell', { name: 'Marco Martins' }).click();
+
+        // Check text
+        const details = await page.getByText('First Name: Marco Last Name:');
+
+        await expect(details).toBeVisible();
+
+        // Logout
+        await page.getByRole('button', { name: 'Logout' }).click();
+
+        await expect(page.getByRole('heading', { name: 'Contact List App' })).toBeVisible();
     });
 });
